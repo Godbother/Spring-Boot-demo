@@ -4,6 +4,9 @@ public class User {
     private Integer id;
     private String username;
     private String password;
+    private String sex;
+    private String uploadHistory;
+    private String remark;
 
     public Integer getId() {
         return id;
@@ -27,6 +30,30 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getUploadHistory() {
+        return uploadHistory;
+    }
+
+    public void setUploadHistory(String uploadHistory) {
+        this.uploadHistory = uploadHistory;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public User(String username, String password) {
