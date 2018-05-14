@@ -1,5 +1,7 @@
 package com.bishe.bishe;
 
+import com.bishe.bishe.admin.ClientConst;
+import com.bishe.bishe.es.BaseCRUD;
 import com.bishe.bishe.model.MyWarcRecord;
 import com.bishe.bishe.model.esmodel.EsWarc;
 import org.archive.io.ArchiveRecordHeader;
@@ -10,6 +12,7 @@ import org.archive.io.warc.WARCRecord;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class MyReader {
     /**
@@ -45,6 +48,9 @@ public class MyReader {
                 len += length;
                 headerFields.append(arh.getHeaderFields().toString());
                 headerWarcType.append(arh.getHeaderValue("WARC-Type").toString());
+                if (myWarcRecord.getBeurl()==null) {
+                    myWarcRecord.setBeurl(arh.getUrl());
+                }
                 url.append(arh.getUrl());
                 mimeType.append(arh.getMimetype());
                 recordIdentifier.append(arh.getRecordIdentifier());
@@ -52,12 +58,14 @@ public class MyReader {
                 httpContent.append(getHttpContent(strContent));
             }
         }
-        myWarcRecord.setHeaderWarcType(headerWarcType.toString());
+        myWarcRecord.setHeaderWarcType("responce");
         myWarcRecord.setHeaderFields(headerFields.toString());
         myWarcRecord.setUrl(url.toString());
         myWarcRecord.setLength(len);
         myWarcRecord.setMimeType(mimeType.toString());
-        myWarcRecord.setRecordIdentifier(recordIdentifier.toString());
+        if (!recordIdentifier.toString().contains("null")) {
+            myWarcRecord.setRecordIdentifier(recordIdentifier.toString());
+        }
         myWarcRecord.setContent(allContent.toString());
         myWarcRecord.setHttpContent(getHttpContent(httpContent.toString()));
 
@@ -107,6 +115,7 @@ public class MyReader {
         esWarc.setMimeType(myWarcRecord.getMimeType());
         esWarc.setContent(myWarcRecord.getContent());
         esWarc.setRecordIdentifier(myWarcRecord.getRecordIdentifier());
+        esWarc.setWarcUrl(myWarcRecord.getBeurl());
 
         //下面这个统一判断是否已经保存好了addtime
         if (esWarc.getAddTime()==null) {
@@ -116,7 +125,7 @@ public class MyReader {
             esWarc.setUpdateTime(date.toString());
             esWarc.setAddTime(date.toString());
         }else {
-            SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
             Date date = format.parse(esWarc.getAddTime());
             esWarc.setUpdateTime(esWarc.getAddTime());
             esWarc.setCreate_at(date.getTime());
@@ -129,7 +138,8 @@ public class MyReader {
 
     public static void main(String[] args) throws Exception{
         EsWarc esWarc = getMyRecord("G:/jp/recording-session-20171215134946.warc");
-        System.out.println(esWarc.getHeaderFields());
+        System.out.println(BaseCRUD.indexDocument(esWarc, ClientConst.index,ClientConst.type));
+//        System.out.println(esWarc.getHeaderFields());
     }
 }
 

@@ -3,13 +3,15 @@ package com.bishe.bishe.es;
 
 import com.bishe.bishe.model.esmodel.EsWarc;
 import io.searchbox.client.JestClient;
+import io.searchbox.core.Bulk;
+import io.searchbox.core.BulkResult;
 import io.searchbox.core.Index;
 
 public class BaseCRUD{
     //类共享一个jestclient
     private static JestClient client;
     //warc用创建新文档，写死index和type
-    public static void createDoc(EsWarc esWarc)throws Exception{
+    /*public static void createDoc(EsWarc esWarc)throws Exception{
         client = MyClient.getClient();
         Index index = new Index.Builder(esWarc)
                 .index("warcs").type("warc")
@@ -27,6 +29,16 @@ public class BaseCRUD{
 //        System.out.println("到达此处");
         client.execute(index);
         client.shutdownClient();//在用完之后关闭
+    }*/
+
+    public static boolean indexDocument(EsWarc esWarc,String indexname,String typename) throws Exception{
+        client = MyClient.getClient();
+        Bulk.Builder bulk = new Bulk.Builder().defaultIndex(indexname).defaultType(typename);
+        Index index = new Index.Builder(esWarc).build();
+        bulk.addAction(index);
+        BulkResult br = client.execute(bulk.build());
+        return br.isSucceeded();
+
     }
 
     /*public static void main(String[] args) throws Exception{
@@ -43,5 +55,4 @@ public class BaseCRUD{
         esWarc.setMimeType("Test");
         createDoc(esWarc);
     }*/
-
 }

@@ -1,7 +1,11 @@
 package com.bishe.bishe.controller;
 
 import com.bishe.bishe.MyReader;
+import com.bishe.bishe.admin.ClientConst;
+import com.bishe.bishe.es.BaseCRUD;
+import com.bishe.bishe.es.EsDao;
 import com.bishe.bishe.model.User;
+import com.bishe.bishe.model.esmodel.EsWarc;
 import com.bishe.bishe.service.UserService;
 import com.bishe.bishe.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private EsDao esDao;
 
     @RequestMapping("/showuser/{id}")
     @ResponseBody
@@ -102,12 +108,16 @@ public class UserController {
 
         String contentType = file.getContentType();
         String fileName = UUID.randomUUID() + file.getOriginalFilename();
-        String filePath = "../../../resources/static/file";
+        String filePath = request.getSession().getServletContext().getRealPath("uploadfile/");
         try {
-            FileUtil.uploadFile(file.getBytes(), filePath, fileName);
+            FileUtil.uploadFile(file.getBytes(),filePath, fileName);
+            EsWarc esWarc = MyReader.getMyRecord(filePath + "/" + fileName);
+            BaseCRUD.indexDocument(esWarc, ClientConst.index,ClientConst.type);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         //返回json
         return "uploadimg success";
     }

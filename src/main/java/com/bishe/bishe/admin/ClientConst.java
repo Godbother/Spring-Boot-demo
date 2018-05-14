@@ -5,6 +5,7 @@ public class ClientConst {
     public final static String type = "warc";
 //    public final static String warc_field_addTime = "addTime";
 //    public final static String warc_field_updateTime = "updateTime";
+    public final static String warc_field_id = "id";
     public final static String warc_field_warcUrl = "warcUrl";
     public final static String warc_field_responseUrl = "responseUrl";
     public final static String warc_field_create_at = "create_at";

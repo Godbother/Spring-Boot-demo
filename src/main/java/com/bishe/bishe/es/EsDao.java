@@ -40,13 +40,12 @@ public interface EsDao {
 
     /**
      * 获取Document
-     * @param o ：返回对象
      * @param index ：文档在哪存放
      * @param type ： 文档表示的对象类别
      * @param id ：文档唯一标识
-     * @return
+     * @return map-took,total,warc
      */
-    public <T> JestResult getDocument(T o, String index, String type, String id) ;
+    public Map getDocument(String index, String type, String id) ;
 
 
     /**
@@ -54,16 +53,16 @@ public interface EsDao {
      * @param index ：文档在哪存放
      * @return
      */
-    public Map searchAll(String index);
+    public Map searchAll(String index,Integer size,Integer page);
 
     /**
      * 搜索
      * @param keyWord ：搜索关键字
      * @return
      */
-    public Map createSearch(String keyWord, String index, String... fields) ;
+    public Map createSearch(String keyWord, String index,Integer size,Integer page, String... fields) ;
 
-    public Map createSearch(String index, String field,Long form,Long to);
+    public Map createSearch(String index, String field,Long form,Long to,Integer size,Integer page);
 
-    public Map createSearch(String keyWord, String index, String field);
+    public Map createSearch(String keyWord, String index, String field,Integer size,Integer page);
 }

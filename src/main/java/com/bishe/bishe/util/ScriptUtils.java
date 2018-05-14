@@ -2,8 +2,11 @@ package com.bishe.bishe.util;
 
 
 import com.bishe.bishe.admin.ClientConst;
+import com.bishe.bishe.model.BaseResponce;
+import com.bishe.bishe.model.Warc;
 import com.bishe.bishe.model.esmodel.EsWarc;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +32,25 @@ public class ScriptUtils {
         return script;
     }
 
-    //把返回的map转换成eswarc对象返回
-    public static List<EsWarc> transfertoEswarc(Map allmap){
+    //把返回的map转换成BaseResponce返回
+    public static BaseResponce transfertoBaseResponce(Map allmap){
         List<EsWarc> warcList = (List<EsWarc>) allmap.get("warcList");
+        Long total = (Long) allmap.get("total");
+        BaseResponce baseResponce = new BaseResponce();
+        List<Warc> warcs = new LinkedList<>();
+        for (EsWarc esw :warcList) {
+            Warc warc = new Warc();
+            warc.setId(esw.getId());
+            warc.setUpdateTime(esw.getUpdateTime());
+            warc.setAddTime(esw.getAddTime());
+            warc.setHeaderFields(esw.getHeaderFields().substring(0,50));
+            warc.setResponseUrl(esw.getResponseUrl().substring(0,50));
+            warc.setWarcUrl(esw.getWarcUrl());
+            warcs.add(warc);
+        }
+        baseResponce.setTotal(total);
+        baseResponce.setWarcList(warcs);
+        return baseResponce;
 //        EsWarc esWarc = new EsWarc();
 //        esWarc.setAddTime((String) map.get(ClientConst.warc_field_addTime));
 //        esWarc.setCreate_at((Long) map.get(ClientConst.warc_field_create_at));
@@ -43,6 +62,5 @@ public class ScriptUtils {
 //        esWarc.setHeaderFields((String) map.get(ClientConst.warc_field_headerFields));
 //        esWarc.setHeaderWarcType((String) map.get(ClientConst.warc_field_headerWarcType));
 //        esWarc.setMimeType((String) map.get(ClientConst.warc_field_mimeType));
-        return warcList;
     }
 }

@@ -2,13 +2,12 @@ package com.bishe.bishe.controller;
 
 import com.bishe.bishe.admin.ClientConst;
 import com.bishe.bishe.es.EsDao;
-import com.bishe.bishe.model.esmodel.EsWarc;
+import com.bishe.bishe.model.BaseResponce;
 import com.bishe.bishe.util.ScriptUtils;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,21 +26,21 @@ public class EsSearchController {
      * @param keyword
      * @return
      */
-    @RequestMapping(value = "/{keyword}/kwsearch",method = RequestMethod.POST)
-    public String keywordSearch(HttpSession session,
+    @RequestMapping(value = "/{size}/{page}/{keyword}/kwsearch",method = RequestMethod.POST, produces="application/json")
+    public BaseResponce keywordSearch(HttpSession session,
+                                @PathVariable("size") Integer size,
+                                @PathVariable("page") Integer page,
                                 @PathVariable("keyword") String keyword){
-        Map result = esDao.createSearch(keyword, ClientConst.index,ClientConst.type);
-        List<EsWarc> warcList = ScriptUtils.transfertoEswarc(result);
-        Gson gson = new Gson();
-        String warcjson = gson.toJson(warcList);
-        return warcjson;
+        Map result = esDao.createSearch(keyword, ClientConst.index,size,page);
+        BaseResponce baseResponce = ScriptUtils.transfertoBaseResponce(result);
+        return baseResponce;
     }
 
     //本方法只给出一周内，一月内，一年内信息
-    @RequestMapping(value = "/{distance}/{to}/{field}/timesearch",method = RequestMethod.POST)
-    public String timesearch(HttpSession session,
+    @RequestMapping(value = "/{size}/{page}/{distance}/{to}/{field}/timesearch",method = RequestMethod.POST, produces="application/json")
+    public BaseResponce timesearch(HttpSession session,
                              @PathVariable("distance") String distance,
-                             @PathVariable("to") Long to,
+                             @PathVariable("to") Long to, @PathVariable("size") Integer size, @PathVariable("page") Integer page,
                              @PathVariable("field") String field){
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(to));
@@ -53,22 +52,29 @@ public class EsSearchController {
             calendar.add(Calendar.YEAR,-1);
         }
         Long from = calendar.getTime().getTime();
-        Map result = esDao.createSearch(ClientConst.index,field,from,to);
-        List<EsWarc> warcList = ScriptUtils.transfertoEswarc(result);
-        Gson gson = new Gson();
-        String warcjson = gson.toJson(warcList);
-        return warcjson;
+        Map result = esDao.createSearch(ClientConst.index,field,from,to,size,page);
+        BaseResponce baseResponce = ScriptUtils.transfertoBaseResponce(result);
+        return baseResponce;
     }
 
 
-    @RequestMapping(value = "/{field}/{keyword}/fieldsearch",method = RequestMethod.POST)
-    public String fieldsearch(HttpSession session,
+    @RequestMapping(value = "/{size}/{page}/{field}/{keyword}/fieldsearch",method = RequestMethod.POST, produces="application/json")
+    public BaseResponce fieldsearch(HttpSession session,
                              @PathVariable("keyword") String keyword,
+                                    @PathVariable("size") Integer size,
+                                    @PathVariable("page") Integer page,
                              @PathVariable("field") String field){
-        Map result = esDao.createSearch(keyword,ClientConst.index,field);
-        List<EsWarc> warcList = ScriptUtils.transfertoEswarc(result);
-        Gson gson = new Gson();
-        String warcjson = gson.toJson(warcList);
-        return warcjson;
+        Map result = esDao.createSearch(keyword,ClientConst.index,field,size,page);
+        BaseResponce baseResponce = ScriptUtils.transfertoBaseResponce(result);
+        return baseResponce;
     }
+
+    @RequestMapping(value = "/{id}/idsearch",method = RequestMethod.POST, produces="application/json")
+    public Map fieldsearch(HttpSession session,
+                           HttpServletRequest request,
+                           @PathVariable("id") String id){
+        Map result = esDao.getDocument(ClientConst.index,ClientConst.type,id);
+        return result;
+    }
+
 }

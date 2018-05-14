@@ -1,6 +1,5 @@
 package com.bishe.bishe.es;
 
-import com.bishe.bishe.admin.ClientConst;
 import com.bishe.bishe.model.esmodel.EsBackInfo;
 import com.bishe.bishe.model.esmodel.EsWarc;
 import com.google.gson.Gson;
@@ -115,26 +114,26 @@ public class EsDaoImpl implements EsDao {
 
     /**
      *
-     * @param object ：返回对象
      * @param index ：文档在哪存放
      * @param type ： 文档表示的对象类别
      * @param id ：文档唯一标识
-     * @param <T>
-     * @return
+     * @return map-took,total,warc
      */
-    public <T> JestResult getDocument(T object , String index, String type, String id) {
+    public Map getDocument(String index, String type, String id) {
         Get get = new Get.Builder(index, id).type(type).build();
+        Map map = new HashMap();
         JestResult result = null ;
         try {
             result = client.execute(get);
-            T o = (T) result.getSourceAsObject(object.getClass());
-            for (Method method : o.getClass().getMethods()) {
-                log.info("getDocument == " + method.getName());
-            }
+            JsonObject jsonObject = result.getJsonObject();
+            Gson gson = new Gson();
+            Map tempmap = gson.fromJson(jsonObject,Map.class);
+            map = (Map) tempmap.get("_source");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return map;
     }
 
 
@@ -143,8 +142,8 @@ public class EsDaoImpl implements EsDao {
      * @param index
      * @return map-String or list<warc>
      */
-    public Map searchAll(String index) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    public Map searchAll(String index,Integer size,Integer page) {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(size).from(size*(page-1));
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
         Search search = new Search.Builder(searchSourceBuilder.toString())
                 .addIndex(index)
@@ -177,8 +176,8 @@ public class EsDaoImpl implements EsDao {
      * @param fields
      * @return
      */
-    public Map createSearch(String keyWord, String index, String... fields) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    public Map createSearch(String keyWord, String index,Integer size,Integer page, String... fields) {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(size).from(size*(page-1));
             searchSourceBuilder.query(QueryBuilders.queryStringQuery(keyWord));
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).build();
         SearchResult result = null ;
@@ -231,6 +230,7 @@ public class EsDaoImpl implements EsDao {
             esWarc.setContent((String)esmap.get("content"));
             esWarc.setWarcUrl((String)esmap.get("warcUrl"));
             esWarc.setUpdateTime((String)esmap.get("updateTime"));
+            esWarc.setAddTime((String)esmap.get("addTime"));
             esWarc.setResponseUrl((String)esmap.get("responseUrl"));
             if (esmap.get("create_at")!=null)
                 esWarc.setCreate_at(Math.round((Double) esmap.get("create_at")));
@@ -250,9 +250,11 @@ public class EsDaoImpl implements EsDao {
      * @param field(除了时间外)
      * @return
      */
-    public Map createSearch(String keyWord, String index, String field) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchQuery(field,keyWord));
+    public Map createSearch(String keyWord, String index, String field,Integer size,Integer page) {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(size).from(size*(page-1));
+//        searchSourceBuilder.query(QueryBuilders.matchQuery(field,keyWord));
+        String querystr = "*" + keyWord + "*";
+        searchSourceBuilder.query(QueryBuilders.wildcardQuery(field,querystr));
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).build();
         SearchResult result = null ;
         List<?> hits = null ;
@@ -272,6 +274,7 @@ public class EsDaoImpl implements EsDao {
             e.printStackTrace();
         }
         return map;
+
     }
 
     /**
@@ -282,8 +285,8 @@ public class EsDaoImpl implements EsDao {
      * @param to
      * @return
      */
-    public Map createSearch(String index, String field,Long form,Long to) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    public Map createSearch(String index, String field,Long form,Long to,Integer size,Integer page) {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(size).from(size*(page-1));
         searchSourceBuilder.query(QueryBuilders.rangeQuery(field).from(form).to(to));
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).build();
         SearchResult result = null ;
@@ -311,11 +314,14 @@ public class EsDaoImpl implements EsDao {
         String index = "warcs";
         String type = "warc";
         String keyword = "test";
-        JestResult result = esDao.getDocument(Map.class,index,type,"1524555782845");
-        System.out.println(result);
+        Map map = esDao.searchAll(index,10,1);
+        System.out.println(map);
         /*for (SearchResult.Hit<EsWarc,Void> hit:result) {
             System.out.println(hit);
         }
         System.out.println(result);*/
     }
+
+
+
 }

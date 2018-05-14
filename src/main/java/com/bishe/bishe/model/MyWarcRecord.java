@@ -10,6 +10,7 @@ public class MyWarcRecord {
     protected String content;
     protected String coding;
     protected String httpContent;
+    protected String beurl;
 
     public String getUrl() {
         return url;
@@ -81,5 +82,13 @@ public class MyWarcRecord {
 
     public void setHttpContent(String httpContent) {
         this.httpContent = httpContent;
+    }
+
+    public String getBeurl() {
+        return beurl;
+    }
+
+    public void setBeurl(String beurl) {
+        this.beurl = beurl;
     }
 }

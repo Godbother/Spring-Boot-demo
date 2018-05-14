@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../static/icon/favicon.ico">
 
-    <title>Jumbotron Template for Bootstrap</title>
+    <title>WARC搜索引擎</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
@@ -51,28 +51,29 @@
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1 main">
+        <div class="col-sm-9 col-sm-offset-2 col-md-9 col-md-offset-2 main">
             <h1 class="page-header">Warc信息搜索引擎</h1>
 
             <div>
                 <div class="input-group">
-                    <input type="text" class="form-control" aria-label="...">
+                    <input type="text" class="form-control" aria-label="..." id="in">
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>关键词搜索</b> <span class="caret"></span></button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b id="searchtype">关键词搜索</b> <span class="caret"></span></button>
+                        <button type="button" class="btn btn-default" id="go"><b>go</b></button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#" id="searchtype"><b>关键词搜索</b></a></li>
+                            <li><a href="#" id="a0"><b>关键词搜索</b></a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#" id="a1"><b>生成的URL</b></a></li>
-                            <li><a href="#"><b>创建时间</b></a></li>
-                            <li><a href="#"><b>更新时间</b></a></li>
-                            <li><a href="#"><b>提及的URL</b></a></li>
+                            <li><a href="#" id="a2"><b>创建时间</b></a></li>
+                            <li><a href="#" id="a3"><b>更新时间</b></a></li>
+                            <li><a href="#" id="a4"><b>提及的URL</b></a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#"><b>headerWarcType</b></a></li>
-                            <li><a href="#"><b>headerFields</b></a></li>
-                            <li><a href="#"><b>content</b></a></li>
-                            <li><a href="#"><b>mimeType</b></a></li>
+                            <li><a href="#" id="a5"><b>headerWarcType</b></a></li>
+                            <li><a href="#" id="a6"><b>headerFields</b></a></li>
+                            <li><a href="#" id="a7"><b>content</b></a></li>
+                            <li><a href="#" id="a8"><b>mimeType</b></a></li>
                         </ul>
                     </div><!-- /btn-group -->
                 </div><!-- /input-group -->
@@ -86,36 +87,15 @@
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>warcUrl</th>
-                            <th>responseUrl</th>
-                            <th>headerFields</th>
-                            <th>headerWarcType</th>
-                            <th>content</th>
+                            <th>生成的URL</th>
+                            <th>提及的URL</th>
+                            <th>header域</th>
                             <th>addTime</th>
                             <th>updateTime</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>1,001</td>
-                            <td>Lorem</td>
-                            <td>ipsum</td>
-                            <td>dolor</td>
-                            <td>sit</td>
-                            <td>sit</td>
-                            <td>sit</td>
-                            <td>sit</td>
-                        </tr>
-                        <tr>
-                            <td>1,002</td>
-                            <td>amet</td>
-                            <td>consectetur</td>
-                            <td>adipiscing</td>
-                            <td>elit</td>
-                            <td>elit</td>
-                            <td>elit</td>
-                            <td>elit</td>
-                        </tr>
+                        <tbody id="resulttable">
                         </tbody>
                     </table>
                 </div>
@@ -147,6 +127,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <!-- Bootstrap core JavaScript
@@ -158,6 +139,5 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../static/js/ie10-viewport-bug-workaround.js"></script>
 </body>
-<script type="text/javascript">
-</script>
+<script src="../static/js/search.js"></script>
 </html>
