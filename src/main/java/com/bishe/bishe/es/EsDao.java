@@ -27,7 +27,7 @@ public interface EsDao {
      * @param id ：文档唯一标识
      * @return
      */
-    public JestResult deleteDocument(String index, String type, String id) ;
+    public Boolean deleteDocument(String index, String type, String id) ;
 
     /**
      * 根据条件删除

@@ -8,6 +8,7 @@ public class EsBackInfo {
     private String id;
     private Double score;
     private Map<String,Object> source;
+    private Map<String,String >  highlight;
 
     public String getIndex() {
         return index;
@@ -47,5 +48,13 @@ public class EsBackInfo {
 
     public void setSource(Map<String,Object> source) {
         this.source = source;
+    }
+
+    public Map<String,String > getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(Map<String,String > highlight) {
+        this.highlight = highlight;
     }
 }

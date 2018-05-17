@@ -4,6 +4,7 @@ import com.bishe.bishe.admin.ClientConst;
 import com.bishe.bishe.es.EsDao;
 import com.bishe.bishe.model.BaseResponce;
 import com.bishe.bishe.util.ScriptUtils;
+import io.searchbox.client.JestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,4 +78,22 @@ public class EsSearchController {
         return result;
     }
 
+    @RequestMapping(value = "/{size}/{page}/searchall", produces="application/json")
+    public BaseResponce searchAll(@PathVariable("size") Integer size,
+                         @PathVariable("page") Integer page){
+        Map result = esDao.searchAll(ClientConst.index,size,page);
+        BaseResponce baseResponce = ScriptUtils.transfertoBaseResponce(result);
+        baseResponce.setPageacount(baseResponce.getTotal()/10+1);
+        return baseResponce;
+    }
+
+    @RequestMapping(value = "/{id}/delwarcbyid", produces="application/json")
+    public String delwarcbyid(@PathVariable("id") String id){
+        Boolean isSuccess = esDao.deleteDocument(ClientConst.index,ClientConst.type,id);
+        if (isSuccess) {
+            return "删除成功";
+        }else {
+            return "删除失败，未知错误";
+        }
+    }
 }

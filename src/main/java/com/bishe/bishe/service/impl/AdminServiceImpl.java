@@ -18,15 +18,13 @@ public class AdminServiceImpl implements AdminService {
     private EsDao esDao;
 
     @Override
-    public boolean login(String adminname, String password) {
+    public Admin login(String adminname, String password) {
         Admin admin = adminMapper.checkAdmin(adminname,password);
-        return admin!=null;
+        return admin;
     }
 
     @Override
     public boolean delwarc(String id) {
-        JestResult result = esDao.deleteDocument(ClientConst.index,ClientConst.type,id);
-        System.out.println(result);
-        return false;
+        return esDao.deleteDocument(ClientConst.index,ClientConst.type,id);
     }
 }

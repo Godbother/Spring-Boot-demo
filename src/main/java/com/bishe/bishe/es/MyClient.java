@@ -11,7 +11,7 @@ public class MyClient {
         JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://192.168.199.130:9200")
-                .multiThreaded(true)
+                .multiThreaded(true).readTimeout(20000)
                 .build());
         if (jestClient==null) {
             jestClient = factory.getObject();

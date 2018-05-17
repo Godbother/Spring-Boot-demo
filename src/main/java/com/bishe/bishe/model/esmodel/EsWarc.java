@@ -3,6 +3,8 @@ package com.bishe.bishe.model.esmodel;
 
 import com.bishe.bishe.model.MyWarcRecord;
 
+import java.util.Map;
+
 public class EsWarc extends MyWarcRecord {
     private String id;
     private String addTime;
@@ -11,6 +13,7 @@ public class EsWarc extends MyWarcRecord {
     protected String responseUrl;//提及的URL
     protected Long create_at;
     protected Long update_at;
+    private Map<String,String > highlight;
 
     public String getId() {
         return id;
@@ -68,6 +71,14 @@ public class EsWarc extends MyWarcRecord {
         this.update_at = update_at;
     }
 
+    public Map<String,String > getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(Map<String,String > highlight) {
+        this.highlight = highlight;
+    }
+
     @Override
     public String toString() {
         return "EsWarc{" +
@@ -78,6 +89,7 @@ public class EsWarc extends MyWarcRecord {
                 ", responseUrl='" + responseUrl + '\'' +
                 ", create_at=" + create_at +
                 ", update_at=" + update_at +
+                ", highlight='" + highlight + '\'' +
                 '}';
     }
 }

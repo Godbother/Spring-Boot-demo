@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Controller
@@ -29,14 +31,21 @@ public class UserController {
         return userService.findUserById(id);
     }
 
-    @RequestMapping(value = "/{username}/{password}/userlogin", method = RequestMethod.GET)
+    @RequestMapping(value = "/{username}/{password}/userlogin", method = RequestMethod.POST)
     @ResponseBody
     public String login(@PathVariable("username") String username,
-                        @PathVariable("password") String password) {
-        if (userService.login(username, password)) {
-            return "ojbk";
+                        @PathVariable("password") String password,
+                        HttpServletRequest request) {
+        User user = userService.login(username, password);
+//        ModelAndView modelAndView = new ModelAndView();
+
+        if (user!=null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("uid",user.getId());
+            session.setAttribute("username",user.getUsername());
+            return "登录成功";
         } else {
-            return "get out!";
+            return "账号或者密码错误，请重新登陆";
         }
     }
 
@@ -103,7 +112,7 @@ public class UserController {
 
     @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
     @ResponseBody
-    public String uploadWarcFile(@RequestParam("file") MultipartFile file,
+    public String uploadWarcFile(@RequestParam("pic") MultipartFile file,
                                  HttpServletRequest request){
 
         String contentType = file.getContentType();
@@ -115,8 +124,8 @@ public class UserController {
             BaseCRUD.indexDocument(esWarc, ClientConst.index,ClientConst.type);
         } catch (Exception e) {
             e.printStackTrace();
+            return "fail to upload";
         }
-
 
         //返回json
         return "uploadimg success";

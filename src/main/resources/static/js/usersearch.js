@@ -76,7 +76,6 @@ $(document).ready(function(){
             "                            <th>" + data.addTime + "</th>" +
             "                            <th>" + data.updateTime + "</th>" +
             "                            <th><form action='http://localhost:8080/" + data.id + "/idsearch' method='post' target='_blank'><button type='submit' class='btn btn-primary'>详细</button>" +
-            "<button onclick='delwarc(" + data.id + ")'>删除</button>" +
             "</form></th>" +
             "                        </tr>";
     }

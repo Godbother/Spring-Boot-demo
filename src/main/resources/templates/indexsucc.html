@@ -104,7 +104,16 @@
     </div>
     <hr/>
     <div class="row">
-        <div align="center"><button class="btn btn-primary" data-toggle="modal" data-target="#myModal">上传warc文件</button></div>
+        <div align="center"><button class="btn btn-warning" data-toggle="modal" data-target="#myModal">上传warc文件</button></div>
+        <div align="center"><ul class="pagination" id="fenye">
+            <!--<li><a href="#">&laquo;</a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li><a href="#">&raquo;</a></li>-->
+        </ul></div>
     </div>
 
     <!--模态框-->
@@ -115,13 +124,14 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h4 class="modal-title" id="myModalLabel">上传warc文件</h4>
                 </div>
-                <form enctype="multipart/form-data" method="post" action="http://localhost:8080/uploadfile">
+                <form enctype="multipart/form-data" method="post" id="uploadForm">
                     <div class="modal-body">
-                        <input type="file" name="file"/>
+                        <input type="file" name="pic" id="file_upload"/>
+                        <br/><span style="color: red" id="fileTypeError"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary">确认上传</button>
+                        <button type="button" class="btn btn-primary" id="uploadfile">确认上传</button>
                     </div>
                 </form>
             </div>
@@ -139,5 +149,7 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../static/js/ie10-viewport-bug-workaround.js"></script>
 </body>
-<script src="../static/js/search.js"></script>
+<script src="../static/js/usersearch.js"></script>
+<script src="../static/js/usersearchrefresh.js"></script>
+<script src="../static/js/upload.js"></script>
 </html>

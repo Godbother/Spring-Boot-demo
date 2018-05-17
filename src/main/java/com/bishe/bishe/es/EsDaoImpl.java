@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -77,16 +78,21 @@ public class EsDaoImpl implements EsDao {
      * @param id ：文档唯一标识
      * @return
      */
-    public JestResult deleteDocument(String index, String type, String id) {
+    public Boolean deleteDocument(String index, String type, String id) {
         Delete delete = new Delete.Builder(id).index(index).type(type).build();
         JestResult result = null ;
+        Integer successful = null;
         try {
             result = client.execute(delete);
+            JsonObject jsonObject = result.getJsonObject();
+            Gson gson = new Gson();
+            Map tempmap = gson.fromJson(jsonObject.getAsJsonObject("_shards"),Map.class);
+            successful = (Integer) tempmap.get("successful");
             log.info("deleteDocument == " + result.getJsonString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return successful!=0;
     }
 
     /**
@@ -221,6 +227,7 @@ public class EsDaoImpl implements EsDao {
             esBackInfo.setType((String) map.get("_type"));
             esBackInfo.setScore((Double) map.get("_score"));
             esBackInfo.setSource((Map<String, Object>) map.get("_source"));
+
             allInfoList.add(esBackInfo);
 
             Map<String,Object > esmap = esBackInfo.getSource();
@@ -252,7 +259,6 @@ public class EsDaoImpl implements EsDao {
      */
     public Map createSearch(String keyWord, String index, String field,Integer size,Integer page) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(size).from(size*(page-1));
-//        searchSourceBuilder.query(QueryBuilders.matchQuery(field,keyWord));
         String querystr = "*" + keyWord + "*";
         searchSourceBuilder.query(QueryBuilders.wildcardQuery(field,querystr));
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).build();
@@ -314,8 +320,7 @@ public class EsDaoImpl implements EsDao {
         String index = "warcs";
         String type = "warc";
         String keyword = "test";
-        Map map = esDao.searchAll(index,10,1);
-        System.out.println(map);
+        System.out.println();
         /*for (SearchResult.Hit<EsWarc,Void> hit:result) {
             System.out.println(hit);
         }

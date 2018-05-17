@@ -5,7 +5,7 @@ import com.bishe.bishe.model.User;
 public interface UserService {
     public User findUserById(Integer id);
 
-    public boolean login(String username,String password);
+    public User login(String username,String password);
 
     public boolean regist(String username,String password);
 
