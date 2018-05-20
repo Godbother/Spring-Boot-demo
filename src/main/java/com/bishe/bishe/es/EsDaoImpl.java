@@ -81,18 +81,18 @@ public class EsDaoImpl implements EsDao {
     public Boolean deleteDocument(String index, String type, String id) {
         Delete delete = new Delete.Builder(id).index(index).type(type).build();
         JestResult result = null ;
-        Integer successful = null;
+        Double successful = null;
         try {
             result = client.execute(delete);
             JsonObject jsonObject = result.getJsonObject();
             Gson gson = new Gson();
             Map tempmap = gson.fromJson(jsonObject.getAsJsonObject("_shards"),Map.class);
-            successful = (Integer) tempmap.get("successful");
+            successful = (Double) tempmap.get("successful");
             log.info("deleteDocument == " + result.getJsonString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return successful!=0;
+        return successful!=(Double) 0.0;
     }
 
     /**

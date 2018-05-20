@@ -3,7 +3,9 @@ package com.bishe.bishe.util;
 
 import com.bishe.bishe.admin.ClientConst;
 import com.bishe.bishe.model.BaseResponce;
+import com.bishe.bishe.model.DetailResponce;
 import com.bishe.bishe.model.Warc;
+import com.bishe.bishe.model.WarcDetail;
 import com.bishe.bishe.model.esmodel.EsWarc;
 
 import java.util.LinkedList;
@@ -62,5 +64,64 @@ public class ScriptUtils {
 //        esWarc.setHeaderFields((String) map.get(ClientConst.warc_field_headerFields));
 //        esWarc.setHeaderWarcType((String) map.get(ClientConst.warc_field_headerWarcType));
 //        esWarc.setMimeType((String) map.get(ClientConst.warc_field_mimeType));
+    }
+
+    //把返回的map转换成DetailResponce返回
+    public static DetailResponce transfertoDetailResponce(Map map) throws Exception{
+        String msg = new String ();
+        DetailResponce detailResponce = new DetailResponce();
+
+        WarcDetail warcDetail = new WarcDetail();
+        warcDetail.setId((String) map.get("id"));
+        warcDetail.setUpdateTime((String) map.get("updateTime"));
+        warcDetail.setAddTime((String) map.get("addTime"));
+        String headerfields = (String) map.get("headerFields");
+        String content = (String) map.get("content");
+        String responceurl = (String) map.get("responseUrl");
+        if (headerfields.length()<1000){
+            warcDetail.setHeaderFields(headerfields.substring(0,headerfields.length()));
+        }else {
+            warcDetail.setHeaderFields(headerfields.substring(0,1000));
+        }
+        if (content.length()<1000) {
+            warcDetail.setContent(content.substring(0,headerfields.length()));
+        }else {
+            warcDetail.setContent(content.substring(0,1000));
+        }
+        if (responceurl.length()<1000) {
+            warcDetail.setResponseUrl(responceurl.substring(0,headerfields.length()));
+        }else {
+            warcDetail.setResponseUrl(responceurl.substring(0,1000));
+        }
+        warcDetail.setWarcUrl((String) map.get("warcUrl"));
+        detailResponce.setWarcDetailList(warcDetail);
+        return detailResponce;
+    }
+
+    public static String datailresponceToHtml(DetailResponce detailResponce,String keyword,String id){
+        WarcDetail warcDetail = detailResponce.getWarcDetailList();
+        StringBuffer temstr = new StringBuffer("<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>warc文件详情页</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div><ul>");
+        temstr.append("<li>Id:" + id + "</li>");
+        temstr.append("<li>入库时间:" + warcDetail.getAddTime() + "</li>");
+        temstr.append("<li>更新时间:" + warcDetail.getUpdateTime() + "</li>");
+        temstr.append("<li>生成URL:" + warcDetail.getWarcUrl() + "</li>");
+        temstr.append("<li>header域:" + warcDetail.getHeaderFields() + "</li>");
+        temstr.append("<li>响应URL:" + warcDetail.getResponseUrl() + "</li>");
+        temstr.append("<li>内容:" + warcDetail.getContent() + "</li>");
+        temstr.append("</ul></div></body>\n" +
+                "</html>");
+        String newString = "<b style='color:red'>" + keyword +  "</b>";
+        String result = null;
+        if (keyword!=null) {
+            result = temstr.toString().replaceAll(keyword,newString);
+        }
+        return result;
     }
 }

@@ -68,6 +68,10 @@ $(document).ready(function(){
 
     });
     function warcforeachprint(data) {
+        var input = $("#in").val();
+        if (input==""||input=="undefine"){
+            input = "yahoo";
+        }
         html = html + "<tr>" +
             "                            <th>" + data.id + "</th>" +
             "                            <th>" + data.warcUrl + "</th>" +
@@ -75,17 +79,9 @@ $(document).ready(function(){
             "                            <th>" + data.headerFields + "</th>" +
             "                            <th>" + data.addTime + "</th>" +
             "                            <th>" + data.updateTime + "</th>" +
-            "                            <th><form action='http://localhost:8080/" + data.id + "/idsearch' method='post' target='_blank'><button type='submit' class='btn btn-primary'>详细</button>" +
-            "<button onclick='delwarc(" + data.id + ")'>删除</button>" +
-            "</form></th>" +
+            "                            <th><form action='http://localhost:8080/" + data.id + "/" + input + "/idsearch' method='post' target='_blank'><button type='submit' class='btn btn-primary'>详细</button></form>" +
+            "<form action='http://localhost:8080/delwarcbyid' method='post'><input name='id' type='hidden' value='" + data.id +"'><button  class='btn btn-danger' type='submit'>删除</button></form>" +
+            "</th>" +
             "                        </tr>";
-    }
-
-    function delwarc(id) {
-        var delurl = "http://localhost:8080/" + id + "/delwarcbyid"
-        $.post(delurl,{},function(data){
-            alert(data);
-            window.location.reload();
-        });
     }
 });

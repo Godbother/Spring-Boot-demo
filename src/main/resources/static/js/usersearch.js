@@ -68,6 +68,10 @@ $(document).ready(function(){
 
     });
     function warcforeachprint(data) {
+        var input = $("#in").val();
+        if (input==""||input=="undefine"){
+            input = "yahoo";
+        }
         html = html + "<tr>" +
             "                            <th>" + data.id + "</th>" +
             "                            <th>" + data.warcUrl + "</th>" +
@@ -75,7 +79,7 @@ $(document).ready(function(){
             "                            <th>" + data.headerFields + "</th>" +
             "                            <th>" + data.addTime + "</th>" +
             "                            <th>" + data.updateTime + "</th>" +
-            "                            <th><form action='http://localhost:8080/" + data.id + "/idsearch' method='post' target='_blank'><button type='submit' class='btn btn-primary'>详细</button>" +
+            "                            <th><form action='http://localhost:8080/" + data.id + "/" + input + "/idsearch' method='post' target='_blank'><button type='submit' class='btn btn-primary'>详细</button></form>" +
             "</form></th>" +
             "                        </tr>";
     }

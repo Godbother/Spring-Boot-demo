@@ -3,10 +3,12 @@ package com.bishe.bishe.controller;
 import com.bishe.bishe.admin.ClientConst;
 import com.bishe.bishe.es.EsDao;
 import com.bishe.bishe.model.BaseResponce;
+import com.bishe.bishe.model.DetailResponce;
 import com.bishe.bishe.util.ScriptUtils;
 import io.searchbox.client.JestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -70,12 +72,20 @@ public class EsSearchController {
         return baseResponce;
     }
 
-    @RequestMapping(value = "/{id}/idsearch",method = RequestMethod.POST, produces="application/json")
-    public Map fieldsearch(HttpSession session,
+    @RequestMapping(value = "/{id}/{keyword}/idsearch",method = RequestMethod.POST)
+    public String fieldsearch(HttpSession session,
                            HttpServletRequest request,
+                           @PathVariable("keyword") String keyword,
                            @PathVariable("id") String id){
         Map result = esDao.getDocument(ClientConst.index,ClientConst.type,id);
-        return result;
+        DetailResponce detailResponce = null;
+        try{
+            detailResponce = ScriptUtils.transfertoDetailResponce(result);
+        }catch (Exception e){
+            detailResponce.setCode(0);
+            detailResponce.setMsg("出错，错误信息如下/n" + e.getMessage());
+        }
+        return ScriptUtils.datailresponceToHtml(detailResponce,keyword,id);
     }
 
     @RequestMapping(value = "/{size}/{page}/searchall", produces="application/json")
@@ -87,13 +97,18 @@ public class EsSearchController {
         return baseResponce;
     }
 
-    @RequestMapping(value = "/{id}/delwarcbyid", produces="application/json")
-    public String delwarcbyid(@PathVariable("id") String id){
+    @RequestMapping(value = "/delwarcbyid", produces="application/json")
+    public ModelAndView delwarcbyid(@RequestParam("id") String id){
         Boolean isSuccess = esDao.deleteDocument(ClientConst.index,ClientConst.type,id);
+        ModelAndView modelAndView = new ModelAndView();
         if (isSuccess) {
-            return "删除成功";
+            modelAndView.addObject("msg","删除成功");
+            modelAndView.setViewName("back_warccharge.html");
+            return modelAndView;
         }else {
-            return "删除失败，未知错误";
+            modelAndView.addObject("msg","删除失败，未知错误");
+            modelAndView.setViewName("back_warccharge.html");
+            return modelAndView;
         }
     }
 }

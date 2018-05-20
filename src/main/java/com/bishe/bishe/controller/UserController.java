@@ -6,6 +6,7 @@ import com.bishe.bishe.es.BaseCRUD;
 import com.bishe.bishe.es.EsDao;
 import com.bishe.bishe.model.User;
 import com.bishe.bishe.model.esmodel.EsWarc;
+import com.bishe.bishe.service.UploadHistoryService;
 import com.bishe.bishe.service.UserService;
 import com.bishe.bishe.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EsDao esDao;
+    @Autowired
+    private UploadHistoryService uploadHistoryService;
 
     @RequestMapping("/showuser/{id}")
     @ResponseBody
@@ -35,12 +38,11 @@ public class UserController {
     @ResponseBody
     public String login(@PathVariable("username") String username,
                         @PathVariable("password") String password,
-                        HttpServletRequest request) {
+                        HttpSession session) {
         User user = userService.login(username, password);
 //        ModelAndView modelAndView = new ModelAndView();
 
         if (user!=null) {
-            HttpSession session = request.getSession();
             session.setAttribute("uid",user.getId());
             session.setAttribute("username",user.getUsername());
             return "登录成功";
@@ -88,7 +90,7 @@ public class UserController {
         }
     }
 
-    //未测试
+    @Deprecated
     @RequestMapping(value = "/{id}/{password}/{sex}/{uploadHistory}/{remark}/changeinfo", method = RequestMethod.POST)
     @ResponseBody
     public String changeInfo(@PathVariable("id") Integer id,
@@ -113,15 +115,20 @@ public class UserController {
     @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
     @ResponseBody
     public String uploadWarcFile(@RequestParam("pic") MultipartFile file,
+                                 HttpSession session,
                                  HttpServletRequest request){
 
         String contentType = file.getContentType();
         String fileName = UUID.randomUUID() + file.getOriginalFilename();
+        String originalname = file.getOriginalFilename();
         String filePath = request.getSession().getServletContext().getRealPath("uploadfile/");
         try {
             FileUtil.uploadFile(file.getBytes(),filePath, fileName);
             EsWarc esWarc = MyReader.getMyRecord(filePath + "/" + fileName);
             BaseCRUD.indexDocument(esWarc, ClientConst.index,ClientConst.type);
+            if (session.getAttribute("username")!=null) {
+                uploadHistoryService.addHistory(originalname,(String) session.getAttribute("username"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return "fail to upload";
