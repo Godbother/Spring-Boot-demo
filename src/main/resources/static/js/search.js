@@ -1,5 +1,6 @@
 $(document).ready(function(){
     var html = "";
+    var total = document.getElementById("total");
     $("#a0").click(function(){
         var a0 = $("#a0").text();
         $("#searchtype").text(a0);
@@ -62,6 +63,7 @@ $(document).ready(function(){
             }
             $.post(url,{},function(data){
                 data.warcList.forEach(warcforeachprint);
+                total.innerText = "共" + data.total + "条结果";
                 result.html(html);
             });
         }
