@@ -2,12 +2,16 @@ package com.bishe.bishe.controller;
 
 import com.bishe.bishe.admin.MySession;
 import com.bishe.bishe.model.Admin;
+import com.bishe.bishe.model.UploadHistory;
 import com.bishe.bishe.service.AdminService;
+import com.bishe.bishe.service.UploadHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AdminController {
@@ -15,6 +19,8 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private MySession mySession;
+    @Autowired
+    private UploadHistoryService uploadHistoryService;
 
     @RequestMapping("/{adminname}/{password}/adminlogin")
     public String login(@PathVariable("adminname")String adminname,
@@ -42,5 +48,21 @@ public class AdminController {
         mySession.removeAttr("adminid");
         mySession.removeAttr("adminname");
         return "注销成功，按确认返回主页";
+    }
+
+    /*用于做最近上传统计表*/
+    @RequestMapping(value = "/recent10", method = RequestMethod.POST,produces="application/json")
+    @ResponseBody
+    public List<UploadHistory> recent10() {
+        List<UploadHistory> uploadHistories = uploadHistoryService.searchRecent();
+        return uploadHistories;
+    }
+
+    /*折线图*/
+    @RequestMapping(value = "/dateline", method = RequestMethod.POST,produces="application/json")
+    @ResponseBody
+    public Map dateline() {
+        Map map = uploadHistoryService.aggDayUpload();
+        return map;
     }
 }

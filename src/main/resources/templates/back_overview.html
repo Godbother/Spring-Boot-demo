@@ -65,14 +65,14 @@
 
             <div class="row placeholders">
                 <div class="col-xs-6 col-sm-5 placeholder">
-                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
+                    <div style="width: 300px;height: 300px" class="center-block"><canvas id="myChart" width="200" height="200"></canvas></div>
                     <h4>Warc上传情况</h4>
                     <span class="text-muted">最近一周内上传情况</span>
                 </div>
                 <div class="col-xs-6 col-sm-5 placeholder">
-                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
+                    <div style="width: 300px;height: 300px" class="center-block"><canvas id="pie" width="200" height="200"></canvas></div>
                     <h4>Warc文件库存</h4>
-                    <span class="text-muted">只显示近一周库存量</span>
+                    <span class="text-muted">文件清理阈值警告</span>
                 </div>
             </div>
 
@@ -87,25 +87,7 @@
                         <th>时间</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>fei</td>
-                        <td>baidu-recording.warc</td>
-                        <td>2018/4/10</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>fei</td>
-                        <td>csdn-recording.warc</td>
-                        <td>2018/4/11</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>CAQ</td>
-                        <td>baidu-recording.warc</td>
-                        <td>2018/4/28</td>
-                    </tr>
+                    <tbody id="recenttable">
                     </tbody>
                 </table>
             </div>
@@ -142,5 +124,7 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../static/js/ie10-viewport-bug-workaround.js"></script>
 <script src="../static/js/logout.js"></script>
+<script src="../static/js/overview.js"></script>
+<script src="../static/js/Chart.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface UploadHistoryMapper {
@@ -19,4 +20,12 @@ public interface UploadHistoryMapper {
                @Param("username")String username,
                @Param("uploadtime")String uploadtime,
                @Param("uploadat")Long uploadat);
+
+    @Select("select * from uploadhistory order by uploadtime desc limit 0,10")
+    List<UploadHistory> selectRecent10();
+
+    @Select("SELECT DATE_FORMAT(uploadtime,'%Y/%m/%d') as time,count(*) as total " +
+            "from bishe.uploadhistory where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= uploadtime " +
+            "group by DATE_FORMAT(uploadtime,'%Y %m %d')")
+    List<Map> dayCount();
 }
