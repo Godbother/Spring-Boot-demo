@@ -1,8 +1,10 @@
-$("#file_upload").change(function uploadfile() {
+$("#uploadfile").click(function () {
     $("#fileTypeError").html('');
     var fileName = $('#file_upload').val();　　　　　　　　　　　　　　　　　　//获得文件名称
     var fileType = fileName.substr(fileName.length-5,fileName.length);　　//截取文件类型,如(.xls)
-    if(fileType=='.warc'){　　　　　//验证文件类型,此处验证也可使用正则
+    if (fileType=='.warc'){
+        $("#fileTypeError").html('');
+        // $("#uploadfile").removeClass("disabled");
         $.ajax({
             url: 'http://localhost:8080/uploadfile',　　　　　　　　　　//上传地址
             type: 'POST',
@@ -19,6 +21,8 @@ $("#file_upload").change(function uploadfile() {
         });
     }else{
         $("#fileTypeError").html('*上传文件类型错误,支持类型: .warc');
+        // $("#uploadfile").addClass("disabled");
     }
 })
+
 

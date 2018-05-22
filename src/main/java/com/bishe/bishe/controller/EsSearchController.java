@@ -93,7 +93,11 @@ public class EsSearchController {
                          @PathVariable("page") Integer page){
         Map result = esDao.searchAll(ClientConst.index,size,page);
         BaseResponce baseResponce = ScriptUtils.transfertoBaseResponce(result);
-        baseResponce.setPageacount(baseResponce.getTotal()/10+1);
+        if (baseResponce.getTotal()%10==0) {
+            baseResponce.setPageacount(baseResponce.getTotal()/10);
+        }else{
+            baseResponce.setPageacount(baseResponce.getTotal()/10+1);
+        }
         return baseResponce;
     }
 

@@ -79,17 +79,17 @@ public class ScriptUtils {
         String content = (String) map.get("content");
         String responceurl = (String) map.get("responseUrl");
         if (headerfields.length()<1000){
-            warcDetail.setHeaderFields(headerfields.substring(0,headerfields.length()));
+            warcDetail.setHeaderFields(headerfields);
         }else {
             warcDetail.setHeaderFields(headerfields.substring(0,1000));
         }
         if (content.length()<1000) {
-            warcDetail.setContent(content.substring(0,headerfields.length()));
+            warcDetail.setContent(content);
         }else {
             warcDetail.setContent(content.substring(0,1000));
         }
         if (responceurl.length()<1000) {
-            warcDetail.setResponseUrl(responceurl.substring(0,headerfields.length()));
+            warcDetail.setResponseUrl(responceurl);
         }else {
             warcDetail.setResponseUrl(responceurl.substring(0,1000));
         }

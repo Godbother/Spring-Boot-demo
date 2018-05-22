@@ -1,11 +1,10 @@
 package com.bishe.bishe.controller;
 
+import com.bishe.bishe.admin.MySession;
 import com.bishe.bishe.model.Admin;
 import com.bishe.bishe.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,6 +13,8 @@ import javax.servlet.http.HttpSession;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private MySession mySession;
 
     @RequestMapping("/{adminname}/{password}/adminlogin")
     public String login(@PathVariable("adminname")String adminname,
@@ -33,5 +34,13 @@ public class AdminController {
     @RequestMapping("/{id}/delwarc")
     public boolean delwarc(@PathVariable("id")String id){
         return adminService.delwarc(id);
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public String logout() {
+        mySession.removeAttr("adminid");
+        mySession.removeAttr("adminname");
+        return "注销成功，按确认返回主页";
     }
 }

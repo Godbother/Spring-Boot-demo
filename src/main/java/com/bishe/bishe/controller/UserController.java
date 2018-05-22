@@ -2,6 +2,7 @@ package com.bishe.bishe.controller;
 
 import com.bishe.bishe.MyReader;
 import com.bishe.bishe.admin.ClientConst;
+import com.bishe.bishe.admin.MySession;
 import com.bishe.bishe.es.BaseCRUD;
 import com.bishe.bishe.es.EsDao;
 import com.bishe.bishe.model.User;
@@ -27,6 +28,8 @@ public class UserController {
     private EsDao esDao;
     @Autowired
     private UploadHistoryService uploadHistoryService;
+    @Autowired
+    private MySession mySession;
 
     @RequestMapping("/showuser/{id}")
     @ResponseBody
@@ -37,14 +40,13 @@ public class UserController {
     @RequestMapping(value = "/{username}/{password}/userlogin", method = RequestMethod.POST)
     @ResponseBody
     public String login(@PathVariable("username") String username,
-                        @PathVariable("password") String password,
-                        HttpSession session) {
+                        @PathVariable("password") String password) {
         User user = userService.login(username, password);
 //        ModelAndView modelAndView = new ModelAndView();
 
         if (user!=null) {
-            session.setAttribute("uid",user.getId());
-            session.setAttribute("username",user.getUsername());
+            mySession.setAttr("uid",user.getId());
+            mySession.setAttr("username",user.getUsername());
             return "登录成功";
         } else {
             return "账号或者密码错误，请重新登陆";
@@ -126,8 +128,8 @@ public class UserController {
             FileUtil.uploadFile(file.getBytes(),filePath, fileName);
             EsWarc esWarc = MyReader.getMyRecord(filePath + "/" + fileName);
             BaseCRUD.indexDocument(esWarc, ClientConst.index,ClientConst.type);
-            if (session.getAttribute("username")!=null) {
-                uploadHistoryService.addHistory(originalname,(String) session.getAttribute("username"));
+            if (mySession.getAttr("username")!=null) {
+                uploadHistoryService.addHistory(originalname,(String) mySession.getAttr("username"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,4 +140,11 @@ public class UserController {
         return "uploadimg success";
     }
 
+    @RequestMapping(value = "/userlogout", method = RequestMethod.POST)
+    @ResponseBody
+    public String logout() {
+        mySession.removeAttr("uid");
+        mySession.removeAttr("username");
+        return "注销成功，按确认返回主页";
+    }
 }
